@@ -66,6 +66,7 @@ invocation policy,as relationship policy
 }
 ```
 #####build resource
+(name:api)
 go to api gateway, create resource add lambda function. test
 create new resource 's'
 select resource, actions->add method, select GET.  
@@ -166,3 +167,19 @@ or using curl: test post:
 ```
 curl -XPOST https://z.us-east-1.amazonaws.com/stage/o -d '{"id":"1"}'
 ```
+#####create api key
+######
+name:k, enabled,selectAPI:api stage:stage->add
+######asso
+choose o/post(o/{x}/get), select method request->api key request:true  
+
+Test:  
+postman: test o/1, get, failed.  
+Add
+```
+x-api-key:xxxx  
+```
+to header.
+#####where
+######publish to prod
+create a new stage prod,based on most recent deployment
