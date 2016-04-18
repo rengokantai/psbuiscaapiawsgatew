@@ -63,3 +63,73 @@ invocation policy
   "SourceAccount":"id"
 }
 }
+```
+#####build resource
+go to api gateway, create resource add lambda function. test   
+select resource, actions->add method, select GET.  
+select (method response)  
+add response headers for 200,
+```
+Access-Control-Allow-Headers
+Access-Control-Allow-Methods
+Access-Control-Allow-Origin
+```
+select (Integration Response) arrow->Header Mappings
+```
+Access-Control-Allow-Headers -> 'Content-Type,X-Amz-Date,Authorzation'
+Access-Control-Allow-Methods -> 'GET,POST'
+Access-Control-Allow-Origin -> '*'
+```
+
+#####build second
+######function
+```
+exports.handler = function(event,context){
+    var o = {};
+    o.id=event.id;
+    o.name=(Math.floor(Math.random()*30)+10).toString();
+    context.succeed(o);
+}
+```
+go to api gateway, create resource add lambda function. test   
+select resource, actions->add method, select POST.  
+test: add body  
+```
+{"id":1}
+```
+######Adding URL param
+```
+$context.apiId
+$context.identity.accountOwner
+$context.identity.sourceIp
+```
+```
+$input.json(x)
+$input.params()
+$input.path(x)
+```
+Ex:
+```
+POST /x
+{
+"a":{
+  "a1":"b1"
+}
+}
+```
+equalto
+```
+$input.path('$.a').size()
+```
+$util:using in mapping templates
+```
+$util.escapeJavascript()
+$util.urlEncode()
+$util.urlDecode()
+$util.base64Encode()
+$util.base64Decode()
+```
+Ex:
+```
+/o/{x}  -> {"id":"$input.params('x')"}
+```
