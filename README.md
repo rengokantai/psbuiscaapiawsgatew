@@ -36,6 +36,7 @@ exports.handler = function(event,context){
 }
 ```
 ######basic policy
+create an IAM role, attach this policy
 ```
 {
   "Version":"2012-10-17",
@@ -52,7 +53,7 @@ exports.handler = function(event,context){
   ]
 }
 ```
-invocation policy
+invocation policy,as relationship policy
 ```
 {
   "Statement":{
@@ -65,7 +66,8 @@ invocation policy
 }
 ```
 #####build resource
-go to api gateway, create resource add lambda function. test   
+go to api gateway, create resource add lambda function. test
+create new resource 's'
 select resource, actions->add method, select GET.  
 select (method response)  
 add response headers for 200,
@@ -92,6 +94,7 @@ exports.handler = function(event,context){
 }
 ```
 go to api gateway, create resource add lambda function. test   
+create new resource 'o'
 select resource, actions->add method, select POST.  
 test: add body  
 ```
@@ -132,4 +135,34 @@ $util.base64Decode()
 Ex:
 ```
 /o/{x}  -> {"id":"$input.params('x')"}
+```
+######building order map template
+create child resource under o.  
+resourcename:x  
+resourcepath: /o/{x} create new method GET,lambda function:b  
+Integration Request->add mapping templates,add
+```
+application/json ,template {"id":"$input.params('x')"}
+```
+Then test: type 1 to test
+######deployment
+choose root->deploy api->[new stage]->name:stage  
+enable cloudwatch logs->loglevel:info,log full req/res,Enable CloudWatch Metrics  
+burstlimit=200 rate=500  
+donot forget to add cloudwatch arn to settting. [see here](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-stage-settings.html)
+######postman
+Test s, using GET
+```
+https://z.us-east-1.amazonaws.com/stage/s
+```
+Test o using POST with body
+```
+https://z.us-east-1.amazonaws.com/stage/o
+```
+```
+{"id":"1"}
+```
+or using curl: test post:
+```
+curl -XPOST https://z.us-east-1.amazonaws.com/stage/o -d '{"id":"1"}'
 ```
